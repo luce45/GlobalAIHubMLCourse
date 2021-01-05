@@ -1,0 +1,32 @@
+How do you define Machine Learning ?
+the use and development of computer systems that are able to learn and adapt without following explicit instructions, by using algorithms and statistical models to analyze and draw inferences from patterns in data.
+Also the way machine learns how to process for the electronic device.
+What are the differences between Supervised and Unsupervised Learning? Specify example 3 algorithms for each of these
+In a supervised learning model, the algorithm learns on a labeled dataset, providing an answer key that the algorithm can use to evaluate its accuracy on training data. An unsupervised model, in contrast, provides unlabeled data that the algorithm tries to make sense of by extracting features and patterns on its own.
+Some popular examples of supervised machine learning algorithms are: Linear regression for regression problems. Random forest for classification and regression problems. Support vector machines for classification problems.
+What are the test and validation set, and why would you want to use them?
+A validation dataset is a sample of data held back from training your model that is used to give an estimate of model skill while tuning model’s hyperparameters.
+The validation dataset is different from the test dataset that is also held back from the training of the model, but is instead used to give an unbiased estimate of the skill of the final tuned model when comparing or selecting between final models.
+Training Dataset: The sample of data used to fit the model.
+Validation Dataset: The sample of data used to provide an unbiased evaluation of a model fit on the training dataset while tuning model hyperparameters. The evaluation becomes more biased as skill on the validation dataset is incorporated into the model configuration.
+Test Dataset: The sample of data used to provide an unbiased evaluation of a final model fit on the training dataset.
+But before we start deciding the algorithm which should be used, it is always advised to split the dataset into 2 or sometimes 3 parts. Machine Learning algorithms, or any algorithm for that matter, has to be first trained on the data distribution available and then validated and tested, before it can be deployed to deal with real-world data.
+What are the main preprocessing steps? Explain them in detail. Why we need to prepare our data?
+Pre-Processing
+Duplicate Values
+In most cases, the duplicates are removed so as to not give that particular data object an advantage or bias, when running machine learning algorithms.
+
+Imbalanced Data
+An Imbalanced dataset is one where the number of instances of a class(es) are significantly higher than another class(es), thus leading to an imbalance and creating rarer class(es).
+Missing Values
+Eleminate missing values
+Filling with mean or median
+Outlier Detection
+Standart Deviation
+Box Plots / IQR Calculation
+Isolation Forest
+How you can explore countionus and discrete variables?
+With the distribution.
+Analyse the plot given below. (What is the plot and variable type, check the distribution and make comment about how you can preproccess it.)
+<matplotlib.axes._subplots.AxesSubplot at 0x2b8ced01320>
+The graphs has both variables contionus and discrete ,also it would be bimodal distribution with normalization.
