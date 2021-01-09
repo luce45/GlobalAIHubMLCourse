@@ -1,0 +1,98 @@
+import numpy as np
+import pandas as pd
+from sklearn import datasets
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from xgboost import XGBClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+X, y = datasets.make_blobs(n_samples=2000, n_features=3)
+
+df = pd.DataFrame(X, columns=['Feature {:2d}'.format(i) for i in range(3)])
+df['Label'] = y
+
+print(df.head())
+
+print(df.info())
+
+print(df.describe().transpose())
+
+sns.countplot(data=df, x="Label")
+plt.show()
+
+for i in range(3):
+  print("Violin Plot: {}".format(df.columns[i]))
+  sns.violinplot(y=df.columns[i], x="Label", data=df)
+  plt.show()
+  
+  sns.set(rc={'figure.figsize':(10,10)})
+sns.scatterplot(data=df, x=df.columns[1], y=df.columns[2], hue="Label")
+plt.show()
+
+df_features = df.drop(["Label"],axis=1)
+correlation_matrix = df_features.corr().round(2)
+sns.heatmap(data=correlation_matrix, annot=True)
+plt.show()
+
+scaler = StandardScaler()
+X_std = scaler.fit_transform(X)
+y = df.Label
+
+X_train, X_test, y_train, y_test = train_test_split(X_std, y, test_size = 0.3, random_state=15)
+
+Decision Tree Classifier
+
+model_tree = DecisionTreeClassifier()
+params = {
+  "criterion": ["gini", "entropy"],
+  "max_depth": range(1,10),
+  "min_samples_split": range(1,10),
+  "min_samples_leaf": range(1,5)
+}
+
+grid = GridSearchCV(
+  model_tree,
+  param_grid=params,
+  cv=5,
+  verbose=1,
+  n_jobs=-1)
+
+grid.fit(X_train, y_train)
+
+grid.best_score_
+
+y_pred = grid.predict(X_test)
+target_names = ['class 0', 'class 1', 'class 2']
+print(classification_report(y_test, y_pred, target_names=target_names))
+
+XgBoost Classifier
+
+params = {
+        'min_child_weight': [1, 5, 10],
+        'gamma': [0.5, 1, 1.5, 2, 5],
+        'subsample': [0.6, 0.8, 1.0],
+        'colsample_bytree': [0.6, 0.8, 1.0],
+        'max_depth': [3, 4, 5]
+        }
+
+model_xgb = XGBClassifier()
+
+grid = GridSearchCV(
+  model_xgb,
+  param_grid=params,
+  cv=5,
+  verbose=1,
+  n_jobs=-1)
+
+grid.fit(X_train, y_train)
+
+grid.best_score_
+
+y_pred = grid.predict(X_test)
+target_names = ['class 0', 'class 1', 'class 2']
+print(classification_report(y_test, y_pred, target_names=target_names))
