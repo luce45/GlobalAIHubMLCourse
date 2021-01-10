@@ -1,0 +1,103 @@
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.metrics import classification_report, confusion_matrix, plot_roc_curve
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+url = "https://raw.githubusercontent.com/globalaihub/introduction-to-machine-learning/main/Final%20Project/winequality.csv"
+df = pd.read_csv(url)
+
+print(df.head())
+
+print(df.describe().transpose())
+
+print(df.info())
+
+sns.countplot(data=df, x="quality")
+
+for attribute in df.columns:
+  sns.displot(df, x=attribute, kde=True)
+  
+ sns.set(rc={'figure.figsize':(10,10)})
+correlation_matrix = df.corr().round(2)
+sns.heatmap(data=correlation_matrix, annot=True)
+
+df['goodquality'] = [1 if x >= 7 else 0 for x in df['quality']]
+
+X = df.drop(['quality','goodquality'], axis = 1)
+y = df['goodquality']
+
+scaler = StandardScaler()
+X_std = scaler.fit_transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(X_std, y, test_size = 0.3, random_state=27)
+
+Decision Tree
+
+model_tree = DecisionTreeClassifier(random_state=27)
+model_tree.fit(X_train, y_train)
+y_pred1 = model_tree.predict(X_test)
+
+print(classification_report(y_test, y_pred1))
+
+cm_tree = confusion_matrix(y_test, y_pred1)
+sns.heatmap(cm_tree, annot=True, annot_kws={"size": 16})
+
+Random Forest
+
+model_rf = RandomForestClassifier(random_state=27)
+model_rf.fit(X_train, y_train)
+y_pred2 = model_rf.predict(X_test)
+
+print(classification_report(y_test, y_pred2))
+
+cm_rf = confusion_matrix(y_test, y_pred2)
+sns.heatmap(cm_rf, annot=True, annot_kws={"size": 16})
+
+Adaboost
+
+model_ada = AdaBoostClassifier(random_state=27)
+model_ada.fit(X_train, y_train)
+y_pred3 = model_ada.predict(X_test)
+
+print(classification_report(y_test, y_pred3))
+
+cm_ada = confusion_matrix(y_test, y_pred3)
+sns.heatmap(cm_ada, annot=True, annot_kws={"size": 16})
+
+Model Comparison
+
+models = []
+models.append(('Decision Tree', DecisionTreeClassifier()))
+models.append(('Random Forest', RandomForestClassifier()))
+models.append(('AdaBoost', AdaBoostClassifier()))
+# evaluate each model in turn
+results = []
+names = []
+scoring = 'accuracy'
+for name, model in models:
+	kfold = KFold(n_splits=10, random_state=2021)
+	cv_results = cross_val_score(model, X_train, y_train, cv=5, scoring=scoring)
+	results.append(cv_results)
+	names.append(name)
+	msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+	print(msg)
+# boxplot algorithm comparison
+fig = plt.figure()
+fig.suptitle('Algorithm Comparison')
+ax = fig.add_subplot(111)
+plt.boxplot(results)
+ax.set_xticklabels(names)
+plt.show()
+
+ax = plt.gca()
+tree_roc = plot_roc_curve(model_tree, X_test, y_test, ax=ax, alpha=0.8)
+rfc_roc = plot_roc_curve(model_rf, X_test, y_test, ax=ax, alpha=0.8)
+ada_roc = plot_roc_curve(model_ada, X_test, y_test, ax=ax, alpha=0.8)
+plt.show()
+
