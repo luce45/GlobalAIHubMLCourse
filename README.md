@@ -24,3 +24,7 @@ Tarea 3.ipynb
 Tarea 2.ipynb
 Homework1 
 
+Please review tarea#2 and Tarea #3 ipynb
+I upload homework #2 and Homework#3 in incorrect documentation. 
+
+
